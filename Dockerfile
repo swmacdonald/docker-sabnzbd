@@ -46,7 +46,6 @@ RUN \
         dpkg \
         gnupg \
         openssl \
-        curl \
     && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
@@ -81,6 +80,18 @@ RUN \
     pip --no-cache-dir install --upgrade pyopenssl cheetah requirements requests && \
     pip install http://www.golug.it/pub/yenc/yenc-0.4.0.tar.gz && \
 
+    # download the OpenVPN profiles for Private Internet Access and rename them to
+    # be suitable as systemd units
+    apk add --no-cache openvpn curl && \
+    curl -o /openvpn.zip https://www.privateinternetaccess.com/openvpn/openvpn.zip && \
+    unzip -d /etc/openvpn/ /openvpn.zip && \
+    cd /etc/openvpn && \
+    ls -1 *.ovpn | while read f; do echo "mv -f '${f}'" $(echo "${f}" | sed -e 's/.*/\L&/g;s/ovpn/conf/;s/ /-/g'); done | sh && \
+
+    # reference the auth file for Private Internet Access
+    sed -i 's/^auth-user-pass$/\0 \/pia.auth/' /etc/openvpn/*.conf && \
+
+
     # remove not needed packages
     apk del $PKG_DEV && \
 
@@ -91,17 +102,6 @@ RUN \
     mkdir -p $SABNZBD_HOME/nzbbackups && \
     mkdir -p $SABNZBD_HOME/config && \
     mkdir -p $SABNZBD_HOME/autoProcessScripts && \
-
-    # download the OpenVPN profiles for Private Internet Access and rename them to
-    # be suitable as systemd units
-    curl -o /openvpn.zip https://www.privateinternetaccess.com/openvpn/openvpn.zip && \
-    unzip -d /etc/openvpn/ /openvpn.zip && \
-    cd /etc/openvpn && \
-    ls -1 *.ovpn | while read f; do echo "mv -f '${f}'" $(echo "${f}" | sed -e 's/.*/\L&/g;s/ovpn/conf/;s/ /-/g'); done | sh 
-
-    # reference the auth file for Private Internet Access
-    && \ sed -i 's/^auth-user-pass$/\0 \/pia.auth/' /etc/openvpn/*.conf && \
-
 
     # cleanup temporary files
     rm -rf /tmp && \
