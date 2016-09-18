@@ -1,5 +1,5 @@
-FROM alpine:3.4
-MAINTAINER Netleader <netleader@outlook.de>
+FROM alpine:latest
+MAINTAINER swmacdonald
 
 
 ENV \
@@ -7,10 +7,10 @@ ENV \
     # this file instructs terminal programs how to achieve things such as displaying color.
     TERM="xterm" \
 
-    # - LANG, LANGUAGE, LC_ALL: language dependent settings (Default: de_DE.UTF-8)
-    LANG="de_DE.UTF-8" \
-    LANGUAGE="de_DE:de" \
-    LC_ALL="de_DE.UTF-8" \
+    # - LANG, LANGUAGE, LC_ALL: language dependent settings (Default: en_US.UTF-8)
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US:en" \
+    LC_ALL="en_US.UTF-8" \
 
     # - PKG_*: the needed applications for installation
     GOSU_VERSION="1.9" \
