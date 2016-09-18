@@ -91,6 +91,17 @@ RUN \
     mkdir -p $SABNZBD_HOME/config && \
     mkdir -p $SABNZBD_HOME/autoProcessScripts && \
 
+    # download the OpenVPN profiles for Private Internet Access and rename them to
+    # be suitable as systemd units
+    curl -o /openvpn.zip https://www.privateinternetaccess.com/openvpn/openvpn.zip && \
+    unzip -d /etc/openvpn/ /openvpn.zip && \
+    cd /etc/openvpn && \
+    ls -1 *.ovpn | while read f; do echo "mv -f '${f}'" $(echo "${f}" | sed -e 's/.*/\L&/g;s/ovpn/conf/;s/ /-/g'); done | sh && \
+
+    # reference the auth file for Private Internet Access
+    sed -i 's/^auth-user-pass$/\0 \/pia.auth/' /etc/openvpn/*.conf && \
+
+
     # cleanup temporary files
     rm -rf /tmp && \
     rm -rf /var/cache/apk/*
