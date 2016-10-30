@@ -1,9 +1,15 @@
 #!/bin/bash
 
+echo "starting with PUID : $PUID"
+echo "starting with PGID : $PGID"
+
 PUID=${PUID:=15000}
 PUSER=${PUSER:=sabnzbd}
 PGID=${PGID:=15000}
 PGROUP=${PGROUP:=sabnzbd}
+
+echo "PUID is now : $PUID"
+echo "PGID is now : $PGID"
 
 #Create internal sabnzbd user (which will be mapped to external user and used to run the process)
 #create group similar to: 

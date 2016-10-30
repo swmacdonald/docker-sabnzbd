@@ -30,7 +30,7 @@ ENV \
 
     # - SABNZBD_REPO, SABNZBD_BRANCH: sabnzbd GitHub repository and related branch
     SABNZBD_REPO="https://github.com/sabnzbd/sabnzbd.git" \
-    SABNZBD_BRANCH="master" \
+    SABNZBD_BRANCH="1.1.x" \
 
     # - SABNZBD_DOWNLOADS: main download folder
     SABNZBD_DOWNLOADS="/downloads"
@@ -78,8 +78,8 @@ RUN \
     pip --no-cache-dir install --upgrade pip && \
     pip --no-cache-dir install --upgrade setuptools && \
     pip --no-cache-dir install --upgrade pyopenssl cheetah requirements requests && \
-    pip install http://www.golug.it/pub/yenc/yenc-0.4.0.tar.gz && \
-
+   # pip install http://www.golug.it/pub/yenc/yenc-0.4.0.tar.gz && \
+    pip install http://bitbucket.org/dual75/yenc/get/0.4.0.tar.gz && \
     # download the OpenVPN profiles for Private Internet Access and rename them to
     # be suitable as systemd units
    # apk add --no-cache openvpn curl && \
@@ -122,5 +122,6 @@ VOLUME $SABNZBD_HOME/config $SABNZBD_HOME/nzbbackups $SABNZBD_HOME/autoProcessSc
 EXPOSE 8080 9090
 
 # Start sabnzbd
-CMD ["/bin/bash", "-c", "$SABNZBD_HOME/start.sh"]
+#CMD ["/bin/bash", "-c", "$SABNZBD_HOME/start.sh"]
+CMD ["/bin/bash"]
 
