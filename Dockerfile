@@ -30,7 +30,7 @@ ENV \
 
     # - SABNZBD_REPO, SABNZBD_BRANCH: sabnzbd GitHub repository and related branch
     SABNZBD_REPO="https://github.com/sabnzbd/sabnzbd.git" \
-    SABNZBD_BRANCH="1.1.x" \
+    SABNZBD_BRANCH="1.0.x" \
 
     # - SABNZBD_DOWNLOADS: main download folder
     SABNZBD_DOWNLOADS="/downloads"
