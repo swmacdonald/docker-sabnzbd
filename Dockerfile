@@ -122,6 +122,6 @@ VOLUME $SABNZBD_HOME/config $SABNZBD_HOME/nzbbackups $SABNZBD_HOME/autoProcessSc
 EXPOSE 8080 9090
 
 # Start sabnzbd
-#CMD ["/bin/bash", "-c", "$SABNZBD_HOME/start.sh"]
-CMD ["/bin/bash"]
+CMD ["/bin/bash", "-c", "$SABNZBD_HOME/start.sh"]
+#CMD ["/bin/bash"]
 
