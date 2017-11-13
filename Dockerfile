@@ -3,6 +3,10 @@ MAINTAINER swmacdonald
 
 
 ENV \
+    
+    # PAR2 GIT TAG
+    PAR2TAG=v0.7.4 \
+
     # - TERM: The name of a terminal information file from /lib/terminfo, 
     # this file instructs terminal programs how to achieve things such as displaying color.
     TERM="xterm" \
@@ -14,9 +18,9 @@ ENV \
 
     # - PKG_*: the needed applications for installation
     GOSU_VERSION="1.9" \
-    PKG_BASE="bash tzdata git" \
-    PKG_DEV="make gcc g++ automake autoconf python-dev openssl-dev libffi-dev" \
-    PKG_PYTHON="ca-certificates py-pip python py-libxml2 py-lxml" \
+    PKG_BASE="bash tzdata git ffmpeg-libs ffmpeg openssl libgomp" \
+    PKG_DEV="make gcc g++ automake autoconf python-dev openssl-dev libffi-dev mercurial musl-dev " \
+    PKG_PYTHON="ca-certificates py-pip python py-libxml2 py-lxml py2-openssl " \
     PKG_COMPRESS="unrar p7zip" \
 
     # - SET_CONTAINER_TIMEZONE: set this environment variable to true to set timezone on container startup
@@ -25,12 +29,12 @@ ENV \
     # - CONTAINER_TIMEZONE: UTC, Default container timezone as found under the directory /usr/share/zoneinfo/
     CONTAINER_TIMEZONE="UTC" \
 
-    # - SR_HOME: SickRage Home directory
+    # - SR_HOME: SABNZB Home directory
     SABNZBD_HOME="/sabnzbd" \
 
     # - SABNZBD_REPO, SABNZBD_BRANCH: sabnzbd GitHub repository and related branch
     SABNZBD_REPO="https://github.com/sabnzbd/sabnzbd.git" \
-    SABNZBD_BRANCH="1.0.x" \
+    SABNZBD_BRANCH="2.3.1" \
 
     # - SABNZBD_DOWNLOADS: main download folder
     SABNZBD_DOWNLOADS="/downloads"
@@ -62,7 +66,7 @@ RUN \
     apk -U add --no-cache $PKG_BASE $PKG_DEV $PKG_PYTHON $PKG_COMPRESS && \
 
     # install par2
-    git clone --depth 1 https://github.com/Parchive/par2cmdline.git && \
+    git clone --depth 1 --branch $PAR2TAG https://github.com/Parchive/par2cmdline.git && \
     cd /par2cmdline && \
     aclocal && \
     automake --add-missing && \
@@ -77,20 +81,9 @@ RUN \
     # setuptools, pyopenssl, cheetah, requirements
     pip --no-cache-dir install --upgrade pip && \
     pip --no-cache-dir install --upgrade setuptools && \
-    pip --no-cache-dir install --upgrade pyopenssl cheetah requirements requests && \
-   # pip install http://www.golug.it/pub/yenc/yenc-0.4.0.tar.gz && \
+    pip --no-cache-dir install --upgrade pyopenssl cheetah sabyenc requirements requests && \
+    
     pip install http://bitbucket.org/dual75/yenc/get/0.4.0.tar.gz && \
-    # download the OpenVPN profiles for Private Internet Access and rename them to
-    # be suitable as systemd units
-   # apk add --no-cache openvpn curl && \
-   # curl -o /openvpn.zip https://www.privateinternetaccess.com/openvpn/openvpn.zip && \
-   # unzip -d /etc/openvpn/ /openvpn.zip && \
-   # cd /etc/openvpn && \
-   # ls -1 *.ovpn | while read f; do echo "mv -f '${f}'" $(echo "${f}" | sed -e 's/.*/\L&/g;s/ovpn/conf/;s/ /-/g'); done | sh && \
-
-    # reference the auth file for Private Internet Access
-    #sed -i 's/^auth-user-pass$/\0 \/pia.auth/' /etc/openvpn/*.conf && \
-
 
     # remove not needed packages
     apk del $PKG_DEV && \
@@ -119,7 +112,7 @@ RUN chmod u+x $SABNZBD_HOME/start.sh
 VOLUME $SABNZBD_HOME/config $SABNZBD_HOME/nzbbackups $SABNZBD_HOME/autoProcessScripts $SABNZBD_DOWNLOADS/complete $SABNZBD_DOWNLOADS/incomplete
 
 # Expose ports
-EXPOSE 8080 9090
+EXPOSE 8080
 
 # Start sabnzbd
 CMD ["/bin/bash", "-c", "$SABNZBD_HOME/start.sh"]
